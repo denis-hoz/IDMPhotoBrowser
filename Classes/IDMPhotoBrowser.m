@@ -157,7 +157,8 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
         _initalPageIndex = 0;
         _autoHide = YES;
-
+        _autoHideInterface = YES;
+        
         _displayDoneButton = YES;
         _doneButtonImage = nil;
 
@@ -1130,7 +1131,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	// Hide controls when dragging begins
-	[self setControlsHidden:YES animated:YES permanent:NO];
+    if(_autoHideInterface){
+        [self setControlsHidden:YES animated:YES permanent:NO];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -1215,16 +1218,19 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 // Enable/disable control visiblity timer
 - (void)hideControlsAfterDelay {
-	// return;
-
-    if (![self areControlsHidden]) {
+	
+    if (![self autoHideInterface]) {
+        return;
+    }
+	
+	if (![self areControlsHidden]) {
         [self cancelControlHiding];
 		_controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
 	}
 }
 
 - (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
-- (void)hideControls      { if(_autoHide) [self setControlsHidden:YES animated:YES permanent:NO]; }
+- (void)hideControls      { if(_autoHide && _autoHideInterface) [self setControlsHidden:YES animated:YES permanent:NO]; }
 - (void)toggleControls    { [self setControlsHidden:![self areControlsHidden] animated:YES permanent:NO]; }
 
 

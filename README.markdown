@@ -6,7 +6,7 @@ We've added both user experience and technical features inspired by Facebook's a
 
 ## New features:
 - Uses ARC
-- Uses AFNetworking for image loading
+- Uses SDWebImage for image loading
 - Image progress shown
 - Minimalistic Facebook-like interface, swipe up/down to dismiss
 - Ability to add custom actions on the action sheet
@@ -118,6 +118,11 @@ browser.displayDoneButton = NO;
 browser.doneBackgroundImage = [UIImage imageNamed:@"IDMPhotoBrowser_customDoneButton.png"];
 ```
 
+If you want to keep the interface shown when the user is scrolling :
+``` objective-c
+browser.autoHideInterface = NO;
+```
+
 You can use a smooth [pop](https://github.com/facebook/pop) animation when presenting and dismissing a photo:
 ``` objective-c
 browser.usePopAnimation = YES;
@@ -170,7 +175,7 @@ Just add `pod 'IDMPhotoBrowser'` to your Podfile.
 
 #### Opensource libraries used
 
-- [AFNetWorking](https://github.com/AFNetworking/AFNetworking)
+- [SDWebImage](https://github.com/rs/SDWebImage)
 - [DACircularProgress](https://github.com/danielamitay/DACircularProgress)
 - [pop](https://github.com/facebook/pop)
 

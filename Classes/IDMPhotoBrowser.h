@@ -53,12 +53,16 @@
 @property (nonatomic) BOOL usePopAnimation;
 @property (nonatomic) BOOL disableVerticalSwipe;
 
-// defines zooming of the background (default 1.0)
+// Default value: true. Set to false to tell the photo viewer not to hide the interface when scrolling
+@property (nonatomic) BOOL autoHideInterface;
+
+// Defines zooming of the background (default 1.0)
 @property (nonatomic) float backgroundScaleFactor;
 
+// Minimum zoom scale (even if screen scale is smaller, this scale will be taken into account)
 @property (nonatomic) float minimumZoomScale;
 
-// animation time (default .28)
+// Animation time (default .28)
 @property (nonatomic) float animationDuration;
 
 // Init
