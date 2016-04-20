@@ -194,7 +194,7 @@
 	}
     
 	// Set
-	self.maximumZoomScale = maxScale;
+	self.maximumZoomScale = MAX(maxScale, 2); // at least 2x zoom scale
 	self.minimumZoomScale = minScale;
 	self.zoomScale = minScale;
     
