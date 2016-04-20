@@ -31,6 +31,7 @@
 @property (nonatomic, strong) IDMTapDetectingImageView *photoImageView;
 @property (nonatomic, strong) IDMCaptionView *captionView;
 @property (nonatomic, strong) id<IDMPhoto> photo;
+@property (nonatomic, assign) float minimumZoomScale;
 
 - (id)initWithPhotoBrowser:(IDMPhotoBrowser *)browser;
 - (void)displayImage;

@@ -56,6 +56,8 @@
 // defines zooming of the background (default 1.0)
 @property (nonatomic) float backgroundScaleFactor;
 
+@property (nonatomic) float minimumZoomScale;
+
 // animation time (default .28)
 @property (nonatomic) float animationDuration;
 

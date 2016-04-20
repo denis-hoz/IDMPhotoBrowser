@@ -962,6 +962,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
             // Add new page
 			IDMZoomingScrollView *page;
             page = [[IDMZoomingScrollView alloc] initWithPhotoBrowser:self];
+            page.minimumZoomScale = self.minimumZoomScale;
             page.backgroundColor = [UIColor clearColor];
             page.opaque = YES;
 
