@@ -9,6 +9,7 @@
 #import "IDMZoomingScrollView.h"
 #import "IDMPhotoBrowser.h"
 #import "IDMPhoto.h"
+#import <JMCResizeableImage/UIImage+JMCResize.h>
 
 // Declare private methods of browser
 @interface IDMPhotoBrowser ()
@@ -113,8 +114,11 @@
             [_progressView removeFromSuperview];
             
             // Set image
-			_photoImageView.image = img;
+			CGSize boundsSize = CGSizeMake(MIN(self.bounds.size.width * 2, img.size.width),
+										   MIN(self.bounds.size.height * 2, img.size.height));
+			_photoImageView.image = [img jmc_resizedImageWithContentMode:UIViewContentModeScaleAspectFit bounds:boundsSize interpolationQuality:kCGInterpolationHigh];
 			_photoImageView.hidden = NO;
+
             
             // Setup photo frame
 			CGRect photoImageViewFrame;
