@@ -270,7 +270,9 @@ caption = _caption;
                 //IDMLog(@"Error loading photo from path: %@", _photoPath);
             }
         } @finally {
-            self.underlyingImage = [self decodedImageWithImage: self.underlyingImage];
+            if ([SDImageCache sharedImageCache].shouldDecompressImages) {
+                self.underlyingImage = [self decodedImageWithImage: self.underlyingImage];
+            }
             [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
         }
     }
