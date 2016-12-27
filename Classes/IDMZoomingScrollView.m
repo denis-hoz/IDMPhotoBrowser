@@ -113,10 +113,13 @@
             //_progressView.alpha = 0.0f;
             [_progressView removeFromSuperview];
             
-            // Set image
-			CGSize boundsSize = CGSizeMake(MIN(self.bounds.size.width * 2, img.size.width),
-										   MIN(self.bounds.size.height * 2, img.size.height));
-			_photoImageView.image = [img jmc_resizedImageWithContentMode:UIViewContentModeScaleAspectFit bounds:boundsSize interpolationQuality:kCGInterpolationHigh];
+            if (img.images == nil) {
+                // Set image
+                CGSize boundsSize = CGSizeMake(MIN(self.bounds.size.width * 2, img.size.width),
+                                               MIN(self.bounds.size.height * 2, img.size.height));
+                img = [img jmc_resizedImageWithContentMode:UIViewContentModeScaleAspectFit bounds:boundsSize interpolationQuality:kCGInterpolationHigh];
+            }
+            _photoImageView.image = img;
 			_photoImageView.hidden = NO;
 
             
