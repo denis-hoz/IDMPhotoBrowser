@@ -10,6 +10,9 @@
 #import "IDMPhotoBrowser.h"
 #import "IDMPhoto.h"
 #import <JMCResizeableImage/UIImage+JMCResize.h>
+#import <FLAnimatedImage/FLAnimatedImage.h>
+@import ImageIO;
+@import MobileCoreServices;
 
 // Declare private methods of browser
 @interface IDMPhotoBrowser ()
@@ -110,30 +113,50 @@
 		// Get image from browser as it handles ordering of fetching
 		UIImage *img = [self.photoBrowser imageForPhoto:_photo];
 		if (img) {
-            // Hide ProgressView
-            //_progressView.alpha = 0.0f;
-            [_progressView removeFromSuperview];
-            
             if (img.images == nil) {
+                // Hide ProgressView
+                //_progressView.alpha = 0.0f;
+                [_progressView removeFromSuperview];
                 // Set image
                 CGSize boundsSize = CGSizeMake(MIN(self.bounds.size.width * 2, img.size.width),
                                                MIN(self.bounds.size.height * 2, img.size.height));
                 img = [img jmc_resizedImageWithContentMode:UIViewContentModeScaleAspectFit bounds:boundsSize interpolationQuality:kCGInterpolationHigh];
+                _photoImageView.image = img;
+                // Setup photo frame
+                CGRect photoImageViewFrame;
+                photoImageViewFrame.origin = CGPointZero;
+                photoImageViewFrame.size = img.size;
+                
+                _photoImageView.frame = photoImageViewFrame;
+                self.contentSize = photoImageViewFrame.size;
+                
+                // Set zoom to minimum zoom
+                [self setMaxMinZoomScalesForCurrentBounds];
+            } else {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    FLAnimatedImage *image = [FLAnimatedImage animatedImageWithGIFData:UIImageAnimatedGIFRepresentation(img, 0, 0)];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        // Hide ProgressView
+                        //_progressView.alpha = 0.0f;
+                        [_progressView removeFromSuperview];
+                        _photoImageView.animatedImage = image;
+                        // Setup photo frame
+                        CGRect photoImageViewFrame;
+                        photoImageViewFrame.origin = CGPointZero;
+                        photoImageViewFrame.size = image.size;
+                        
+                        _photoImageView.frame = photoImageViewFrame;
+                        self.contentSize = photoImageViewFrame.size;
+                        
+                        // Set zoom to minimum zoom
+                        [self setMaxMinZoomScalesForCurrentBounds];
+                    });
+                });
+                
             }
-            _photoImageView.image = img;
 			_photoImageView.hidden = NO;
 
             
-            // Setup photo frame
-			CGRect photoImageViewFrame;
-			photoImageViewFrame.origin = CGPointZero;
-			photoImageViewFrame.size = img.size;
-            
-			_photoImageView.frame = photoImageViewFrame;
-			self.contentSize = photoImageViewFrame.size;
-
-			// Set zoom to minimum zoom
-			[self setMaxMinZoomScalesForCurrentBounds];
         } else {
 			// Hide image view
 			_photoImageView.hidden = YES;
@@ -158,6 +181,40 @@
 // Image failed so just show black!
 - (void)displayImageFailure {
     [_progressView removeFromSuperview];
+}
+
+
+NSData * UIImageAnimatedGIFRepresentation(UIImage *image, NSTimeInterval duration, NSUInteger loopCount) {
+    if (image.images == nil) {
+        return nil;
+    }
+    
+    size_t frameCount = image.images.count;
+    NSTimeInterval frameDuration = (duration <= 0.0 ? image.duration / frameCount : duration / frameCount);
+    NSDictionary *frameProperties = @{
+                                      (__bridge NSString *)kCGImagePropertyGIFDictionary: @{
+                                              (__bridge NSString *)kCGImagePropertyGIFDelayTime: @(frameDuration)
+                                              }
+                                      };
+    
+    NSMutableData *mutableData = [NSMutableData data];
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)mutableData, kUTTypeGIF, frameCount, NULL);
+    
+    NSDictionary *imageProperties = @{ (__bridge NSString *)kCGImagePropertyGIFDictionary: @{
+                                               (__bridge NSString *)kCGImagePropertyGIFLoopCount: @(loopCount)
+                                               }
+                                       };
+    CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)imageProperties);
+    
+    for (size_t idx = 0; idx < image.images.count; idx++) {
+        CGImageDestinationAddImage(destination, [[image.images objectAtIndex:idx] CGImage], (__bridge CFDictionaryRef)frameProperties);
+    }
+    
+    BOOL success = CGImageDestinationFinalize(destination);
+    CFRelease(destination);
+    
+    
+    return success ? [NSData dataWithData:mutableData] : nil;
 }
 
 #pragma mark - Setup
