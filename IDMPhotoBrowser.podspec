@@ -14,4 +14,5 @@ Pod::Spec.new do |s|
   s.dependency       'SDWebImage/GIF', '~> 4.0.0-beta2'
   s.dependency       'DACircularProgress'
   s.dependency       'pop'
+  s.dependency       'YLGIFImage'
   end

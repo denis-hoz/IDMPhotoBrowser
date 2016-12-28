@@ -9,6 +9,7 @@
 #import "IDMPhoto.h"
 #import "IDMPhotoBrowser.h"
 #import "SDImageCacheConfig.h"
+#import "YLGIFImage.h"
 
 // Private
 @interface IDMPhoto () {
@@ -16,7 +17,7 @@
     NSString *_photoPath;
 
     // Image
-    UIImage *_underlyingImage;
+    YLGIFImage *_underlyingImage;
 
     // Other
     NSString *_caption;
@@ -24,7 +25,7 @@
 }
 
 // Properties
-@property (nonatomic, strong) UIImage *underlyingImage;
+@property (nonatomic, strong) YLGIFImage *underlyingImage;
 
 // Methods
 - (void)imageLoadingComplete;
@@ -98,7 +99,7 @@ caption = _caption;
 
 #pragma mark NSObject
 
-- (id)initWithImage:(UIImage *)image {
+- (id)initWithImage:(YLGIFImage *)image {
 	if ((self = [super init])) {
 		self.underlyingImage = image;
 	}
@@ -146,7 +147,7 @@ caption = _caption;
                                  }
                              } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
                                  if (image) {
-                                     self.underlyingImage = image;
+                                     self.underlyingImage = (YLGIFImage*)image;
                                      [self performSelectorOnMainThread:@selector(imageLoadingComplete) withObject:nil waitUntilDone:NO];
                                  }
                              }];
@@ -267,7 +268,8 @@ caption = _caption;
 - (void)loadImageFromFileAsync {
     @autoreleasepool {
         @try {
-            self.underlyingImage = [UIImage imageWithContentsOfFile:_photoPath];
+            YLGIFImage *image = [[YLGIFImage alloc] initWithData:[NSData dataWithContentsOfFile:_photoPath]];
+            self.underlyingImage = image;
             if (!_underlyingImage) {
                 //IDMLog(@"Error loading photo from path: %@", _photoPath);
             }
