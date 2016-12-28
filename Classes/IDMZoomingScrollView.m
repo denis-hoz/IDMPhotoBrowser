@@ -214,7 +214,7 @@
     }
     
 	// Set
-	self.maximumZoomScale = MAX(maxScale, self.minimumZoom);
+	self.maximumZoomScale = minScale * MAX(maxScale, self.minimumZoom);
 	self.minimumZoomScale = minScale;
 	self.zoomScale = minScale;
 	self.maximumDoubleTapZoomScale = maxDoubleTapZoomScale;
